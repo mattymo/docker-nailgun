@@ -8,11 +8,6 @@ else {
     $production = 'dev'
 }
 
-notify { "debug111":
-  message => $production,
-  before => Class["nailgun::venv"],
-}
-
 if $production == 'prod'{
   $env_path = "/usr"
   $staticdir = "/usr/share/nailgun/static"
