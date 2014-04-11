@@ -5,7 +5,7 @@ MAINTAINER Aleksandr Didenko adidenko@mirantis.com
 WORKDIR /root
 
 RUN rm -rf /etc/yum.repos.d/*
-RUN echo -e "[nailgun]\nname=Nailgun Local Repo\nbaseurl=http://10.20.0.2:8080/centos/fuelweb/x86_64/\ngpgcheck=0" > /etc/yum.repos.d/nailgun.repo
+RUN echo -e "[nailgun]\nname=Nailgun Local Repo\nbaseurl=http://$(/sbin/ip route | awk '/default/ { print $3 }'):8080/centos/fuelweb/x86_64/\ngpgcheck=0" > /etc/yum.repos.d/nailgun.repo
 RUN yum clean all
 RUN yum --quiet install -y puppet
 

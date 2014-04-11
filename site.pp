@@ -2,10 +2,10 @@ $fuel_settings = parseyaml($astute_settings_yaml)
 $fuel_version = parseyaml($fuel_version_yaml)
 
 if is_hash($::fuel_version) and $::fuel_version['VERSION'] and $::fuel_version['VERSION']['production'] {
-  $production = $::fuel_version['VERSION']['production']
+    $production = $::fuel_version['VERSION']['production']
 }
 else {
-  $production = 'docker-build'
+    $production = 'dev'
 }
 
 if $production == 'prod'{
@@ -16,26 +16,25 @@ if $production == 'prod'{
   $staticdir = "/opt/nailgun/share/nailgun/static"
 }
 
-Exec  {path => '/usr/bin:/bin:/usr/sbin:/sbin'}
-
-if $production == "docker-build" {
-  package { "supervisor": }
-  package { "python-virtualenv": }
-  package { "python-devel": }
-  package { "postgresql-libs": }
-  package { "postgresql-devel": }
-  package { "ruby-devel": }
-  package { "gcc": }
-  package { "gcc-c++": }
-  package { "make": }
-  package { "rsyslog": }
-  package { "fence-agents": }
-  package { "nailgun-redhat-license": }
-  package { "python-fuelclient": }
-}
 
 Class["nailgun::user"] ->
 Class["nailgun::venv"]
+
+package { "supervisor": }
+package { "python-virtualenv": }
+package { "python-devel": }
+package { "postgresql-libs": }
+package { "postgresql-devel": }
+package { "ruby-devel": }
+package { "gcc": }
+package { "gcc-c++": }
+package { "make": }
+package { "rsyslog": }
+package { "fence-agents": }
+package { "nailgun-redhat-license": }
+package { "python-fuelclient": }
+
+Exec  {path => '/usr/bin:/bin:/usr/sbin:/sbin'}
 
 $centos_repos =
 [
@@ -60,12 +59,13 @@ $venv = $env_path
 $pip_index = "--no-index"
 $pip_find_links = "-f file://${pip_repo}"
 
-$database_name = "nailgun"
-$database_engine = "postgresql"
-$database_host = $::fuel_settings['ADMIN_NETWORK']['ipaddress']
-$database_port = "5432"
-$database_user = "nailgun"
-$database_passwd = "nailgun"
+$templatedir = $staticdir
+
+class { "nailgun::database":
+  user      => $database_user,
+  password  => $database_passwd,
+  dbname    => $database_name,
+}
 
 class { "nailgun::user":
   nailgun_group => $nailgun_group,
@@ -82,15 +82,15 @@ class { "nailgun::venv":
   nailgun_user => $nailgun_user,
   nailgun_group => $nailgun_group,
 
-  database_name => $database_name,
-  database_engine => $database_engine,
-  database_host => $database_host,
-  database_port => $database_port,
-  database_user => $database_user,
-  database_passwd => $database_passwd,
+  database_name => "nailgun",
+  database_engine => "postgresql",
+  database_host => $::fuel_settings['ADMIN_NETWORK']['ipaddress'],
+  database_port => "5432",
+  database_user => "nailgun",
+  database_passwd => "nailgun",
 
   staticdir => $staticdir,
-  templatedir => $$staticdir,
+  templatedir => $templatedir,
   rabbitmq_astute_user => $rabbitmq_astute_user,
   rabbitmq_astute_password => $rabbitmq_astute_password,
 
@@ -101,5 +101,5 @@ class { "nailgun::venv":
   admin_network_last    => $::fuel_settings['ADMIN_NETWORK']['static_pool_end'],
   admin_network_netmask => $::fuel_settings['ADMIN_NETWORK']['netmask'],
   admin_network_ip      => $::fuel_settings['ADMIN_NETWORK']['ipaddress']
-}
 
+}
