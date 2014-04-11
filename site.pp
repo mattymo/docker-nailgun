@@ -16,8 +16,6 @@ if $production == 'prod'{
   $staticdir = "/opt/nailgun/share/nailgun/static"
 }
 
-$postgres_default_version = '8.4'
-
 Class["nailgun::user"] ->
 Class["nailgun::venv"]
 
