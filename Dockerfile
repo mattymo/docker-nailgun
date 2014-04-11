@@ -12,11 +12,15 @@ RUN yum --quiet install -y puppet
 ADD start.sh /usr/local/bin/start.sh
 ADD astute.yaml /etc/astute.yaml
 ADD site.pp /root/site.pp
+
 #FIXME: generate supervisor.conf via puppet
 ADD supervisord.conf /root/supervisord.conf
 
 RUN touch /var/lib/hiera/common.yaml
 RUN chmod +x /usr/local/bin/start.sh
+
+RUN /usr/bin/puppet apply -d -v /root/site.pp
+RUN /bin/cp /root/supervisord.conf /etc/supervisord.conf
 
 EXPOSE 8001
 
