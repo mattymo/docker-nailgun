@@ -8,6 +8,11 @@ else {
     $production = 'dev'
 }
 
+notify { "debug111":
+  message => $production,
+  before => Class["nailgun::venv"],
+}
+
 if $production == 'prod'{
   $env_path = "/usr"
   $staticdir = "/usr/share/nailgun/static"
@@ -16,6 +21,7 @@ if $production == 'prod'{
   $staticdir = "/opt/nailgun/share/nailgun/static"
 }
 
+$postgres_default_version = '8.4'
 
 Class["nailgun::user"] ->
 Class["nailgun::venv"]
@@ -46,7 +52,8 @@ $centos_repos =
 ]
 
 $repo_root = "/var/www/nailgun"
-$pip_repo = "/var/www/nailgun/eggs"
+#$pip_repo = "/var/www/nailgun/eggs"
+$pip_repo = "http://${::fuel_settings['ADMIN_NETWORK']['ipaddress']}:8080/eggs/"
 $gem_source = "http://${::fuel_settings['ADMIN_NETWORK']['ipaddress']}:8080/gems/"
 
 $package = "Nailgun"
@@ -57,15 +64,9 @@ $nailgun_user = "nailgun"
 $venv = $env_path
 
 $pip_index = "--no-index"
-$pip_find_links = "-f file://${pip_repo}"
+$pip_find_links = "-f ${pip_repo}"
 
 $templatedir = $staticdir
-
-class { "nailgun::database":
-  user      => $database_user,
-  password  => $database_passwd,
-  dbname    => $database_name,
-}
 
 class { "nailgun::user":
   nailgun_group => $nailgun_group,

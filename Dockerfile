@@ -12,6 +12,8 @@ RUN yum --quiet install -y puppet
 ADD etc /etc
 ADD start.sh /usr/local/bin/start.sh
 ADD astute.yaml /etc/astute.yaml
+RUN mkdir -p /etc/nailgun
+ADD version.yaml /etc/nailgun/version.yaml
 ADD site.pp /root/site.pp
 
 #FIXME: generate supervisor.conf via puppet

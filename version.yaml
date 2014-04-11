@@ -1,0 +1,11 @@
+VERSION:
+  mirantis: "yes"
+  release: "5.0"
+  build_number: "89"
+  production: "docker-build"
+  build_id: "2014-04-09_03-54-32"
+  fuellib_sha: "9056ddfb1047c0384d2f03d7b7d32ba8cb4c54d8"
+  nailgun_sha: "00b2e1015e50e486f1c7215791724aaefaaf609d"
+  astute_sha: "35473eb08b16f4778283e993126a4fd15eb1d00f"
+  ostf_sha: "17f2fe6e56452f8e2f01a385be4c4b87bf3698a8"
+  fuelmain_sha: "97b539a540a4f15899de661d614edfda47767ab6"
