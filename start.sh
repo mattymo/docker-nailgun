@@ -1,13 +1,13 @@
 #!/bin/bash
 
-puppet apply -d -v /root/site.pp
+ln -s /etc/fuel/nailgun/version.yaml /etc/nailgun/version.yaml || true
+puppet apply -v /etc/puppet/modules/nailgun/examples/nailgun-only.pp
 
 /opt/nailgun/bin/nailgun_syncdb
 /opt/nailgun/bin/nailgun_fixtures
 
-/etc/init.d/supervisord stop
+pgrep supervisord && /etc/init.d/supervisord stop
 
-ln -s /etc/fuel/nailgun/version.yaml /etc/nailgun/version.yaml
 
 /usr/bin/supervisord -n
 
