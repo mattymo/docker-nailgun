@@ -21,5 +21,6 @@ ADD start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
 
 EXPOSE 8001
+VOLUME /usr/share/nailgun/static
 
 CMD ["/usr/local/bin/start.sh"]
